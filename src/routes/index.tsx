@@ -1,48 +1,453 @@
-import { useMemo, useState } from 'react'
-import { createFileRoute } from '@tanstack/react-router'
-import { BlinkClientBoundary } from '@/components/BlinkClientBoundary'
-import { toast } from 'sonner'
-import { Bar, BarChart, CartesianGrid, Cell, Legend, Line, LineChart, Pie, PieChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
-import { Activity, Archive, Beaker, Calculator, ChevronDown, CircleHelp, Coins, FlaskConical, Gauge, Leaf, Menu, PanelLeftClose, PanelLeftOpen, Plus, Save, Settings2, ShieldCheck, Sparkles, Trash2, TrendingUp, Waves, X } from 'lucide-react'
+import { createFileRoute, Link } from '@tanstack/react-router'
+import { FlaskConical, Beaker, TrendingUp, Leaf, Coins, Building2, MapPin, FileText, ArrowRight, CircleCheck as CheckCircle2, Layers, Sparkles, ShieldCheck, Cpu, Database, Network, Zap, ChevronRight, ChartBar as BarChart3, Calculator, Boxes, Users, GraduationCap, HardHat } from 'lucide-react'
 
-type Mix = { targetGrade: string; targetStrength: number; maxAggregate: number; wcRatio: number; slump: number; cementDensity: number; silicaPct: number; silicaDensity: number; fine: number; coarse: number; water: number; spDosage: number; spDensity: number; plasticPct: number; plasticDensity: number; plasticReplaces: 'fine' | 'coarse' }
-type Page = 'dashboard' | 'mix' | 'strength' | 'sustainability' | 'cost' | 'saved' | 'about'
+export const Route = createFileRoute('/')({
+  head: () => ({
+    meta: [
+      { title: 'CONCRETE.AI — AI-Powered Civil Engineering & Construction Intelligence Platform' },
+      { name: 'description', content: 'AI-assisted concrete mix design, material intelligence, structural concepts, cost analysis, sustainability analysis, and supplier discovery for civil engineers, contractors, and researchers.' },
+      { property: 'og:title', content: 'CONCRETE.AI — Civil Engineering Intelligence Platform' },
+      { property: 'og:description', content: 'Build smarter. Design stronger. Analyze better.' },
+      { property: 'og:type', content: 'website' },
+    ],
+  }),
+  component: LandingPage,
+})
 
-const defaults: Mix = { targetGrade: 'M30', targetStrength: 30, maxAggregate: 20, wcRatio: 0.45, slump: 100, cementDensity: 3.15, silicaPct: 8, silicaDensity: 2.2, fine: 720, coarse: 1080, water: 170, spDosage: 1.2, spDensity: 1.1, plasticPct: 10, plasticDensity: 0.95, plasticReplaces: 'fine' }
-const ages = [3, 7, 14, 28, 56, 90]
-const nav = [{ id: 'dashboard', label: 'Dashboard', icon: Gauge }, { id: 'mix', label: 'Mix Design', icon: Beaker }, { id: 'strength', label: 'Strength Prediction', icon: TrendingUp }, { id: 'sustainability', label: 'Sustainability', icon: Leaf }, { id: 'cost', label: 'Cost Analysis', icon: Coins }, { id: 'saved', label: 'Saved Projects', icon: Archive }, { id: 'about', label: 'About', icon: CircleHelp }] as const
-
-export const Route = createFileRoute('/')({ head: () => ({ meta: [{ title: 'AI Concrete Mix Design & Strength Prediction' }, { name: 'description', content: 'Transparent sustainable concrete mix calculations for civil engineering education.' }] }), component: Home })
-
-function Home() { return <BlinkClientBoundary fallback={<Loading />}><ConcreteApp /></BlinkClientBoundary> }
-function Loading() { return <div className="flex min-h-dvh items-center justify-center bg-background"><div className="flex items-center gap-3 text-muted-foreground"><Activity className="h-5 w-5 animate-pulse text-primary" /> Loading analysis workspace…</div></div> }
-
-function ConcreteApp() {
-  const [page, setPage] = useState<Page>('dashboard'); const [mix, setMix] = useState<Mix>(defaults); const [saved, setSaved] = useState<Mix[]>(() => { try { return JSON.parse(localStorage.getItem('concrete-mixes') || '[]') } catch { return [] } }); const [mobileNav, setMobileNav] = useState(false)
-  const calc = useMemo(() => calculate(mix), [mix]); const prediction = predict(mix, 28); const curve = ages.map(age => ({ age: `${age}d`, sustainable: Number(predict(mix, age).toFixed(1)), conventional: Number((prediction * (age === 28 ? 1.05 : 1.05 + (age / 28 - 1) * 0.04)).toFixed(1)) }))
-  const go = (next: Page) => { setPage(next); setMobileNav(false) }
-  const saveProject = () => { const next = [mix, ...saved].slice(0, 10); setSaved(next); localStorage.setItem('concrete-mixes', JSON.stringify(next)); toast.success('Mix design saved locally') }
-  return <div className="min-h-dvh bg-background text-foreground"><header className="sticky top-0 z-30 flex h-16 items-center justify-between border-b border-border bg-background/95 px-4 backdrop-blur lg:px-7"><div className="flex items-center gap-3"><button onClick={() => setMobileNav(true)} className="rounded-lg p-2 hover:bg-muted lg:hidden" aria-label="Open navigation"><Menu className="h-5 w-5" /></button><div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-sm"><FlaskConical className="h-5 w-5" /></div><div><div className="font-semibold tracking-tight">AI Concrete Mix Design</div><div className="hidden text-[11px] text-muted-foreground sm:block">Sustainable Concrete Analysis & Prediction</div></div></div><div className="flex items-center gap-2"><div className="hidden items-center gap-2 rounded-full border border-border bg-card px-3 py-1.5 text-xs text-muted-foreground md:flex"><span className="h-2 w-2 rounded-full bg-primary" /> Educational prototype</div><button onClick={saveProject} className="flex items-center gap-2 rounded-lg bg-primary px-3 py-2 text-sm font-medium text-primary-foreground transition hover:opacity-90 active:scale-95"><Save className="h-4 w-4" /><span className="hidden sm:inline">Save mix</span></button></div></header><div className="flex"><aside className={`fixed inset-y-0 left-0 z-40 w-72 border-r border-border bg-card p-4 transition-transform lg:sticky lg:top-16 lg:h-[calc(100dvh-4rem)] lg:w-64 lg:translate-x-0 lg:shrink-0 ${mobileNav ? 'translate-x-0' : '-translate-x-full'}`}><div className="mb-8 flex items-center justify-between px-2 lg:hidden"><span className="text-sm font-semibold">Workspace</span><button onClick={() => setMobileNav(false)} className="rounded-lg p-2 hover:bg-muted"><X className="h-4 w-4" /></button></div><div className="mb-3 px-3 text-[10px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">Analysis workspace</div><nav className="space-y-1">{nav.map(item => { const Icon = item.icon; return <button key={item.id} onClick={() => go(item.id)} className={`flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-sm transition ${page === item.id ? 'bg-primary/10 font-semibold text-primary' : 'text-muted-foreground hover:bg-muted hover:text-foreground'}`}><Icon className="h-4 w-4 shrink-0" />{item.label}{item.id === 'strength' && <span className="ml-auto rounded-full bg-accent/40 px-1.5 py-0.5 text-[10px] text-accent-foreground">AI</span>}</button> })}</nav><div className="mt-auto hidden border-t border-border pt-5 lg:block"><div className="rounded-xl bg-muted/60 p-3"><div className="mb-2 flex items-center gap-2 text-xs font-semibold"><ShieldCheck className="h-4 w-4 text-primary" /> Code-aware workflow</div><p className="text-[11px] leading-relaxed text-muted-foreground">Built around transparent IS 10262:2019 principles. Always verify with trial mixes.</p></div></div></aside>{mobileNav && <button aria-label="Close navigation" onClick={() => setMobileNav(false)} className="fixed inset-0 z-30 bg-foreground/20 lg:hidden" />}<main className="min-w-0 flex-1"><div className="mx-auto max-w-[1500px] p-4 sm:p-6 lg:p-8">{page === 'dashboard' && <Dashboard calc={calc} mix={mix} curve={curve} prediction={prediction} go={go} />}{page === 'mix' && <MixDesign mix={mix} setMix={setMix} calc={calc} save={saveProject} />}{page === 'strength' && <Strength mix={mix} curve={curve} prediction={prediction} />}{page === 'sustainability' && <Sustainability mix={mix} calc={calc} />}{page === 'cost' && <Cost calc={calc} mix={mix} />}{page === 'saved' && <Saved saved={saved} setMix={setMix} go={go} />}{page === 'about' && <About />}</div></main></div></div>
+function LandingPage() {
+  return (
+    <div className="min-h-dvh bg-background text-foreground">
+      <Nav />
+      <Hero />
+      <Capabilities />
+      <Workflow />
+      <MaterialIntelligence />
+      <AIPrediction />
+      <StructuralIntelligence />
+      <Sustainability />
+      <Audiences />
+      <FinalCTA />
+      <Footer />
+    </div>
+  )
 }
 
-function PageHeading({ eyebrow, title, description, action }: { eyebrow: string; title: string; description: string; action?: React.ReactNode }) { return <div className="mb-7 flex flex-col justify-between gap-4 sm:flex-row sm:items-end"><div><div className="mb-2 flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-primary"><span className="h-1.5 w-1.5 rounded-full bg-primary" />{eyebrow}</div><h1 className="font-serif text-3xl tracking-tight sm:text-4xl">{title}</h1><p className="mt-2 max-w-2xl text-sm leading-relaxed text-muted-foreground">{description}</p></div>{action}</div> }
-function Card({ children, className = '' }: { children: React.ReactNode; className?: string }) { return <section className={`rounded-2xl border border-border bg-card p-5 shadow-sm ${className}`}>{children}</section> }
-function Metric({ label, value, detail, tone = 'default' }: { label: string; value: string; detail: string; tone?: 'default' | 'green' | 'amber' }) { return <Card className="relative overflow-hidden"><div className={`absolute right-0 top-0 h-16 w-16 rounded-bl-[3rem] ${tone === 'green' ? 'bg-primary/10' : tone === 'amber' ? 'bg-accent/20' : 'bg-muted'}`} /><div className="relative"><div className="text-xs text-muted-foreground">{label}</div><div className="mt-2 font-mono text-2xl font-semibold tracking-tight">{value}</div><div className="mt-1 text-[11px] text-muted-foreground">{detail}</div></div></Card> }
+function Nav() {
+  return (
+    <header className="sticky top-0 z-50 border-b border-border bg-background/85 backdrop-blur-md">
+      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
+        <div className="flex items-center gap-3">
+          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-sm">
+            <FlaskConical className="h-5 w-5" />
+          </div>
+          <div className="text-[15px] font-semibold tracking-tight">CONCRETE<span className="text-primary">.AI</span></div>
+        </div>
+        <nav className="hidden items-center gap-6 md:flex">
+          <a href="#capabilities" className="text-sm text-muted-foreground transition-colors hover:text-foreground">Capabilities</a>
+          <a href="#workflow" className="text-sm text-muted-foreground transition-colors hover:text-foreground">Workflow</a>
+          <a href="#audiences" className="text-sm text-muted-foreground transition-colors hover:text-foreground">For Teams</a>
+          <a href="#sustainability" className="text-sm text-muted-foreground transition-colors hover:text-foreground">Sustainability</a>
+        </nav>
+        <div className="flex items-center gap-2.5">
+          <Link to="/app" className="inline-flex h-9 items-center gap-2 rounded-lg bg-primary px-4 text-sm font-medium text-primary-foreground shadow-sm transition-all hover:bg-primary/90 active:scale-[0.98]">
+            Launch Platform
+            <ArrowRight className="h-4 w-4" />
+          </Link>
+        </div>
+      </div>
+    </header>
+  )
+}
 
-function Dashboard({ calc, mix, curve, prediction, go }: { calc: ReturnType<typeof calculate>; mix: Mix; curve: { age: string; sustainable: number; conventional: number }[]; prediction: number; go: (p: Page) => void }) { return <><PageHeading eyebrow="Project overview" title="Concrete intelligence, made transparent." description="A live, educational workspace for exploring sustainable mix proportions, strength development and material impact." action={<button onClick={() => go('mix')} className="flex items-center justify-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground shadow-sm transition hover:-translate-y-0.5"><Plus className="h-4 w-4" /> New mix design</button>} /><div className="mb-6 grid gap-3 sm:grid-cols-2 xl:grid-cols-4"><Metric label="Target grade" value={mix.targetGrade} detail={`${mix.targetStrength} MPa characteristic`} tone="green" /><Metric label="Water / cement" value={mix.wcRatio.toFixed(2)} detail={`${calc.waterBinder.toFixed(2)} water / binder`} /><Metric label="Binder content" value={`${calc.binder.toFixed(0)} kg`} detail={`${mix.silicaPct}% silica fume replacement`} tone="amber" /><Metric label="Predicted 28-day" value={`${prediction.toFixed(1)} MPa`} detail={`${(prediction - mix.targetStrength).toFixed(1)} MPa vs target`} tone="green" /></div><div className="grid gap-5 xl:grid-cols-[1.45fr_1fr]"><Card className="min-h-[330px]"><div className="mb-5 flex items-start justify-between"><div><h2 className="font-semibold">Strength development</h2><p className="mt-1 text-xs text-muted-foreground">Estimated compressive strength by curing age</p></div><button onClick={() => go('strength')} className="text-xs font-semibold text-primary hover:underline">Explore model →</button></div><div className="h-[245px] w-full"><ResponsiveContainer><LineChart data={curve} margin={{ left: -20, right: 8, top: 8, bottom: 0 }}><CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false} /><XAxis dataKey="age" tick={{ fontSize: 11 }} stroke="var(--muted-foreground)" /><YAxis tick={{ fontSize: 11 }} stroke="var(--muted-foreground)" unit=" MPa" /><Tooltip contentStyle={{ background: 'var(--card)', border: '1px solid var(--border)', borderRadius: 12, fontSize: 12 }} /><Legend iconType="circle" wrapperStyle={{ fontSize: 11 }} /><Line type="monotone" dataKey="sustainable" name="Sustainable" stroke="var(--primary)" strokeWidth={3} dot={{ r: 3 }} /><Line type="monotone" dataKey="conventional" name="Conventional" stroke="var(--accent)" strokeWidth={2} strokeDasharray="5 5" dot={false} /></LineChart></ResponsiveContainer></div></Card><Card><div className="mb-5"><h2 className="font-semibold">Binder composition</h2><p className="mt-1 text-xs text-muted-foreground">Cement vs supplementary cementitious material</p></div><div className="h-[220px]"><ResponsiveContainer><PieChart><Pie data={[{ name: 'Cement', value: calc.cement }, { name: 'Silica fume', value: calc.silica }]} dataKey="value" innerRadius={60} outerRadius={86} paddingAngle={4}><Cell fill="var(--primary)" /><Cell fill="var(--accent)" /></Pie><Tooltip contentStyle={{ background: 'var(--card)', border: '1px solid var(--border)', borderRadius: 12, fontSize: 12 }} /><Legend iconType="circle" wrapperStyle={{ fontSize: 11 }} /></PieChart></ResponsiveContainer></div><div className="mt-3 flex justify-between border-t border-border pt-3 text-xs"><span className="text-muted-foreground">Plastic diversion</span><strong>{calc.plastic.toFixed(1)} kg/m³</strong></div></Card></div><div className="mt-5 grid gap-5 lg:grid-cols-2"><Card><div className="mb-4 flex items-center gap-2"><Waves className="h-4 w-4 text-primary" /><h2 className="font-semibold">Calculated mix · 1 m³</h2></div><div className="grid grid-cols-2 gap-x-6 gap-y-3 sm:grid-cols-4">{[['Cement', calc.cement], ['Silica fume', calc.silica], ['Fine aggregate', calc.fineNatural], ['Coarse aggregate', calc.coarseNatural], ['Water', mix.water], ['Superplasticizer', calc.sp], ['Recycled plastic', calc.plastic], ['Total binder', calc.binder]].map(([label, value]) => <div key={label as string}><div className="text-[11px] text-muted-foreground">{label}</div><div className="mt-1 font-mono text-sm font-semibold">{Number(value).toFixed(1)} <span className="text-[10px] font-normal text-muted-foreground">kg</span></div></div>)}</div></Card><Card className="border-primary/20 bg-primary/[0.04]"><div className="flex gap-3"><Settings2 className="mt-0.5 h-5 w-5 shrink-0 text-primary" /><div><h2 className="font-semibold">Engineering note</h2><p className="mt-2 text-sm leading-relaxed text-muted-foreground">Final structural concrete mix proportions must be verified using the applicable IS codes, trial mixes and laboratory testing.</p><button onClick={() => go('about')} className="mt-3 text-xs font-semibold text-primary hover:underline">Read assumptions & limitations →</button></div></div></Card></div></> }
+function Hero() {
+  return (
+    <section className="relative overflow-hidden border-b border-border">
+      <div className="absolute inset-0 bg-gradient-to-b from-primary/[0.03] to-transparent" />
+      <div className="relative mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8 lg:py-28">
+        <div className="mx-auto max-w-3xl text-center">
+          <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-border bg-card px-3.5 py-1.5 text-xs text-muted-foreground shadow-sm">
+            <Sparkles className="h-3.5 w-3.5 text-primary" />
+            AI-Powered Civil Engineering & Construction Intelligence Platform
+          </div>
+          <h1 className="font-serif text-4xl font-semibold tracking-tight sm:text-5xl lg:text-[3.5rem] lg:leading-[1.1]">
+            Build smarter.<br />
+            Design stronger.<br />
+            <span className="text-primary">Analyze better.</span>
+          </h1>
+          <p className="mx-auto mt-6 max-w-2xl text-base leading-relaxed text-muted-foreground sm:text-lg">
+            CONCRETE.AI combines AI-assisted engineering, concrete mix design, material intelligence,
+            structural concepts, supplier discovery, cost analysis, and sustainability analysis in one
+            professional platform.
+          </p>
+          <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
+            <Link to="/app" className="inline-flex h-12 items-center gap-2 rounded-xl bg-primary px-6 text-sm font-semibold text-primary-foreground shadow-md transition-all hover:-translate-y-0.5 hover:shadow-lg active:scale-[0.98]">
+              Start Engineering Project
+              <ArrowRight className="h-4 w-4" />
+            </Link>
+            <Link to="/app" className="inline-flex h-12 items-center gap-2 rounded-xl border border-border bg-card px-6 text-sm font-semibold text-foreground shadow-sm transition-all hover:bg-muted active:scale-[0.98]">
+              Explore Platform
+              <ChevronRight className="h-4 w-4" />
+            </Link>
+          </div>
+        </div>
 
-function Field({ label, value, onChange, suffix, type = 'number', options }: { label: string; value: string | number; onChange: (v: string) => void; suffix?: string; type?: string; options?: string[] }) { return <label className="block"><span className="mb-1.5 block text-xs font-medium text-muted-foreground">{label}</span><div className="relative">{options ? <select value={value} onChange={e => onChange(e.target.value)} className="w-full appearance-none rounded-lg border border-input bg-background px-3 py-2.5 pr-9 text-sm outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/15">{options.map(o => <option key={o}>{o}</option>)}</select> : <input type={type} value={value} onChange={e => onChange(e.target.value)} className="w-full rounded-lg border border-input bg-background px-3 py-2.5 text-sm outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/15" />}{options ? <ChevronDown className="pointer-events-none absolute right-3 top-3 h-4 w-4 text-muted-foreground" /> : suffix && <span className="absolute right-3 top-2.5 text-xs text-muted-foreground">{suffix}</span>}</div></label> }
-function MixDesign({ mix, setMix, calc, save }: { mix: Mix; setMix: (m: Mix) => void; calc: ReturnType<typeof calculate>; save: () => void }) { const set = (key: keyof Mix) => (value: string) => setMix({ ...mix, [key]: key === 'plasticReplaces' || key === 'targetGrade' ? value : Number(value) }); return <><PageHeading eyebrow="Mix design calculator" title="Concrete Mix Design Parameters" description="Tune a sustainable M30 example and see every calculated quantity update instantly." action={<button onClick={save} className="flex items-center justify-center gap-2 rounded-xl border border-border bg-card px-4 py-2.5 text-sm font-semibold transition hover:bg-muted"><Save className="h-4 w-4" /> Save project</button>} /><div className="grid gap-5 xl:grid-cols-[1.2fr_0.8fr]"><Card><div className="mb-6 flex items-center gap-2 border-b border-border pb-4"><Calculator className="h-5 w-5 text-primary" /><div><h2 className="font-semibold">Design basis</h2><p className="text-xs text-muted-foreground">Educational implementation using IS 10262:2019 principles</p></div></div><div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3"><Field label="Target grade" value={mix.targetGrade} onChange={set('targetGrade')} options={['M20', 'M25', 'M30', 'M35', 'M40']} /><Field label="Target compressive strength" value={mix.targetStrength} onChange={set('targetStrength')} suffix="MPa" /><Field label="Maximum aggregate size" value={mix.maxAggregate} onChange={set('maxAggregate')} suffix="mm" options={['10', '20', '40']} /><Field label="Water / cement ratio" value={mix.wcRatio} onChange={set('wcRatio')} /><Field label="Slump requirement" value={mix.slump} onChange={set('slump')} suffix="mm" /></div><div className="mb-6 mt-8 flex items-center gap-2 border-b border-border pb-4"><Waves className="h-5 w-5 text-primary" /><div><h2 className="font-semibold">Materials & replacement strategy</h2><p className="text-xs text-muted-foreground">Values are per cubic metre unless noted</p></div></div><div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3"><Field label="Cement density" value={mix.cementDensity} onChange={set('cementDensity')} suffix="t/m³" /><Field label="Silica fume replacement" value={mix.silicaPct} onChange={set('silicaPct')} suffix="%" /><Field label="Silica fume density" value={mix.silicaDensity} onChange={set('silicaDensity')} suffix="t/m³" /><Field label="Fine aggregate quantity" value={mix.fine} onChange={set('fine')} suffix="kg" /><Field label="Coarse aggregate quantity" value={mix.coarse} onChange={set('coarse')} suffix="kg" /><Field label="Water quantity" value={mix.water} onChange={set('water')} suffix="kg" /><Field label="Superplasticizer dosage" value={mix.spDosage} onChange={set('spDosage')} suffix="% binder" /><Field label="Superplasticizer density" value={mix.spDensity} onChange={set('spDensity')} suffix="t/m³" /><Field label="Plastic waste replacement" value={mix.plasticPct} onChange={set('plasticPct')} suffix="%" /><Field label="Plastic waste density" value={mix.plasticDensity} onChange={set('plasticDensity')} suffix="t/m³" /><Field label="Plastic waste replaces" value={mix.plasticReplaces === 'fine' ? 'Fine aggregate' : 'Coarse aggregate'} onChange={v => set('plasticReplaces')(v === 'Fine aggregate' ? 'fine' : 'coarse')} options={['Fine aggregate', 'Coarse aggregate']} /></div></Card><CalculationCard calc={calc} /></div></> }
-function CalculationCard({ calc }: { calc: ReturnType<typeof calculate> }) { return <Card className="h-fit xl:sticky xl:top-24"><div className="mb-5 flex items-center justify-between"><div><h2 className="font-semibold">Calculated quantities</h2><p className="mt-1 text-xs text-muted-foreground">For 1 m³ of concrete</p></div><span className="rounded-full bg-primary/10 px-2.5 py-1 text-[10px] font-semibold text-primary">LIVE</span></div><div className="space-y-1">{[['Cement', calc.cement, 'Binder'], ['Silica fume', calc.silica, 'Binder'], ['Fine aggregate', calc.fineNatural, 'Natural aggregate'], ['Coarse aggregate', calc.coarseNatural, 'Natural aggregate'], ['Water', calc.water, 'Water'], ['Superplasticizer', calc.sp, 'Admixture'], ['Recycled plastic', calc.plastic, 'Recycled aggregate']].map(([name, value, group]) => <div key={name as string} className="flex items-center justify-between border-b border-border/70 py-2.5"><div><div className="text-sm">{name}</div><div className="text-[10px] text-muted-foreground">{group}</div></div><div className="font-mono text-sm font-semibold">{Number(value).toFixed(1)} <span className="text-[10px] font-normal text-muted-foreground">kg</span></div></div>)}</div><div className="mt-4 rounded-xl bg-muted/70 p-3"><div className="flex justify-between text-sm"><span className="text-muted-foreground">Total binder</span><strong>{calc.binder.toFixed(1)} kg/m³</strong></div><div className="mt-2 flex justify-between text-sm"><span className="text-muted-foreground">Water / binder</span><strong>{calc.waterBinder.toFixed(2)}</strong></div></div><p className="mt-4 text-[11px] leading-relaxed text-muted-foreground">Final structural concrete mix proportions must be verified using the applicable IS codes, trial mixes and laboratory testing.</p></Card> }
+        <div className="mt-16 grid grid-cols-2 gap-4 sm:grid-cols-4 lg:gap-6">
+          {[
+            { icon: Beaker, label: 'Mix Design', value: 'IS 10262:2019' },
+            { icon: TrendingUp, label: 'Strength Prediction', value: '3–90 day curve' },
+            { icon: Boxes, label: 'Material Database', value: '15+ materials' },
+            { icon: MapPin, label: 'Supplier Discovery', value: 'Location-aware' },
+          ].map((item) => {
+            const Icon = item.icon
+            return (
+              <div key={item.label} className="rounded-xl border border-border bg-card p-4 shadow-sm">
+                <div className="mb-3 flex h-9 w-9 items-center justify-center rounded-lg bg-primary/8 text-primary">
+                  <Icon className="h-4 w-4" />
+                </div>
+                <div className="text-sm font-semibold">{item.label}</div>
+                <div className="mt-0.5 text-xs text-muted-foreground">{item.value}</div>
+              </div>
+            )
+          })}
+        </div>
+      </div>
+    </section>
+  )
+}
 
-function Strength({ mix, curve, prediction }: { mix: Mix; curve: { age: string; sustainable: number; conventional: number }[]; prediction: number }) { const [age, setAge] = useState(28); const current = predict(mix, age); const confidence = Math.max(0.72, 0.92 - mix.plasticPct * 0.006); return <><PageHeading eyebrow="Transparent model" title="AI Compressive Strength Prediction" description="A model-based estimate designed for learning and exploration — not a trained machine-learning model." action={<span className="flex items-center gap-2 rounded-full border border-accent/40 bg-accent/10 px-3 py-2 text-xs font-medium text-accent-foreground"><Sparkles className="h-4 w-4" /> Prototype prediction</span>} /><div className="grid gap-5 xl:grid-cols-[0.85fr_1.15fr]"><Card className="flex flex-col justify-between"><div><div className="mb-6 flex items-center justify-between"><div><h2 className="font-semibold">Prediction output</h2><p className="mt-1 text-xs text-muted-foreground">Select curing age</p></div><select value={age} onChange={e => setAge(Number(e.target.value))} className="rounded-lg border border-input bg-background px-3 py-2 text-sm"><option value="3">3 days</option><option value="7">7 days</option><option value="14">14 days</option><option value="28">28 days</option><option value="56">56 days</option><option value="90">90 days</option></select></div><div className="rounded-2xl bg-primary p-6 text-primary-foreground"><div className="text-xs opacity-75">Predicted compressive strength · {age} days</div><div className="mt-3 font-mono text-5xl font-semibold">{current.toFixed(1)} <span className="text-xl">MPa</span></div><div className="mt-5 h-2 overflow-hidden rounded-full bg-primary-foreground/20"><div className="h-full rounded-full bg-accent transition-all" style={{ width: `${Math.min(100, current / (mix.targetStrength * 1.4) * 100)}%` }} /></div><div className="mt-2 flex justify-between text-[11px] opacity-75"><span>Target {mix.targetStrength} MPa</span><span>{current >= mix.targetStrength ? 'Potentially achieved' : 'More curing required'}</span></div></div></div><div className="mt-6 space-y-3 text-sm"><div className="flex justify-between"><span className="text-muted-foreground">Estimated range</span><strong>{(current * 0.9).toFixed(0)}–{(current * 1.08).toFixed(0)} MPa</strong></div><div className="flex justify-between"><span className="text-muted-foreground">Difference to target</span><strong className={current >= mix.targetStrength ? 'text-primary' : 'text-accent-foreground'}>{(current - mix.targetStrength).toFixed(1)} MPa</strong></div><div className="flex justify-between"><span className="text-muted-foreground">Model confidence</span><strong>{Math.round(confidence * 100)}% indicative</strong></div></div><div className="mt-6 rounded-xl border border-accent/40 bg-accent/10 p-3 text-xs leading-relaxed text-accent-foreground">Prototype prediction — laboratory validation required. The model combines binder content, water/binder ratio, silica fume benefit, plastic replacement penalty and curing-age development.</div></Card><Card><div className="mb-5"><h2 className="font-semibold">Strength vs curing age</h2><p className="mt-1 text-xs text-muted-foreground">Interactive comparison of conventional and sustainable concrete</p></div><div className="h-[350px]"><ResponsiveContainer><LineChart data={curve} margin={{ left: -15, right: 10, top: 10, bottom: 5 }}><CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false} /><XAxis dataKey="age" tick={{ fontSize: 11 }} /><YAxis unit=" MPa" tick={{ fontSize: 11 }} /><Tooltip contentStyle={{ background: 'var(--card)', border: '1px solid var(--border)', borderRadius: 12, fontSize: 12 }} /><Legend wrapperStyle={{ fontSize: 11 }} /><Line type="monotone" dataKey="sustainable" name="Sustainable mix" stroke="var(--primary)" strokeWidth={3} dot={{ r: 4 }} /><Line type="monotone" dataKey="conventional" name="Conventional mix" stroke="var(--accent)" strokeWidth={2} strokeDasharray="5 5" /></LineChart></ResponsiveContainer></div></Card></div></> }
+function Capabilities() {
+  const capabilities = [
+    { icon: Beaker, title: 'Concrete Mix Design', desc: 'Transparent mix calculations following IS 10262:2019 principles with silica fume and recycled plastic aggregate support.' },
+    { icon: Cpu, title: 'AI Build Advisor', desc: 'Preliminary recommendations for concrete grade, structural system, and materials based on building parameters.' },
+    { icon: Boxes, title: 'Material Intelligence', desc: 'Comprehensive database of cement, aggregates, SCMs, admixtures, and sustainable alternatives with properties and standards.' },
+    { icon: TrendingUp, title: 'Strength Prediction', desc: 'Model-based compressive strength estimates across curing ages from 3 to 90 days with confidence indicators.' },
+    { icon: Building2, title: 'Structural Concept', desc: 'Preliminary structural layout with column grid, beam, slab, and footing concepts for planning and education.' },
+    { icon: Calculator, title: 'Cost Analysis', desc: 'Compare conventional vs sustainable mix costs with editable local material prices and transportation estimates.' },
+    { icon: Leaf, title: 'Sustainability Analysis', desc: 'Quantify plastic waste diversion, CO₂ reduction, and natural aggregate savings with assumption-based scoring.' },
+    { icon: MapPin, title: 'Nearby Material Finder', desc: 'Search for suppliers by material type and location with filters for distance, rating, and delivery options.' },
+    { icon: FileText, title: 'Engineering Reports', desc: 'Generate comprehensive project reports covering mix design, strength, materials, cost, and sustainability.' },
+  ]
+  return (
+    <section id="capabilities" className="border-b border-border py-20">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="mb-12 max-w-2xl">
+          <div className="mb-2.5 flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.16em] text-primary">
+            <span className="h-1 w-1 rounded-full bg-primary" />
+            Platform Capabilities
+          </div>
+          <h2 className="font-serif text-3xl font-semibold tracking-tight sm:text-4xl">Everything you need for concrete engineering</h2>
+          <p className="mt-3 text-base leading-relaxed text-muted-foreground">A unified workspace for mix design, material selection, structural concepts, cost analysis, and sustainability — built on transparent engineering principles.</p>
+        </div>
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {capabilities.map((cap) => {
+            const Icon = cap.icon
+            return (
+              <div key={cap.title} className="group rounded-xl border border-border bg-card p-5 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md">
+                <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-xl bg-primary/8 text-primary transition-colors group-hover:bg-primary/12">
+                  <Icon className="h-5 w-5" />
+                </div>
+                <h3 className="text-base font-semibold">{cap.title}</h3>
+                <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{cap.desc}</p>
+              </div>
+            )
+          })}
+        </div>
+      </div>
+    </section>
+  )
+}
 
-function Sustainability({ mix, calc }: { mix: Mix; calc: ReturnType<typeof calculate> }) { const [cementFactor, setCementFactor] = useState(0.82); const [plasticFactor, setPlasticFactor] = useState(0.15); const naturalSaved = mix.plasticReplaces === 'fine' ? calc.plastic : calc.plastic; const co2 = calc.silica * 0.02 + mix.plasticPct * plasticFactor + calc.cement * (mix.silicaPct / 100) * cementFactor; return <><PageHeading eyebrow="Impact lens" title="Sustainability Analysis" description="See what changes when industrial by-products and recycled plastic enter the mix. Edit assumptions to match your study context." /><div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-4"><Metric label="Plastic diverted" value={`${calc.plastic.toFixed(1)} kg`} detail="per m³ of concrete" tone="green" /><Metric label="Natural aggregate reduction" value={`${mix.plasticPct}%`} detail={`replaces ${mix.plasticReplaces} aggregate`} tone="green" /><Metric label="Cement replaced" value={`${calc.silica.toFixed(1)} kg`} detail="with silica fume" tone="amber" /><Metric label="Estimated CO₂ reduction" value={`${co2.toFixed(1)} kg`} detail="assumption-based estimate" tone="green" /></div><div className="mt-5 grid gap-5 lg:grid-cols-[1fr_0.8fr]"><Card><div className="mb-5"><h2 className="font-semibold">Conventional vs sustainable</h2><p className="mt-1 text-xs text-muted-foreground">Relative material intensity per 1 m³</p></div><div className="h-[300px]"><ResponsiveContainer><BarChart data={[{ name: 'Cement', conventional: calc.binder, sustainable: calc.cement }, { name: 'Natural aggregate', conventional: mix.fine + mix.coarse, sustainable: calc.fineNatural + calc.coarseNatural }, { name: 'Recycled input', conventional: 0, sustainable: calc.plastic }]} margin={{ left: -15, right: 10 }}><CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false} /><XAxis dataKey="name" tick={{ fontSize: 11 }} /><YAxis tick={{ fontSize: 11 }} unit=" kg" /><Tooltip contentStyle={{ background: 'var(--card)', border: '1px solid var(--border)', borderRadius: 12, fontSize: 12 }} /><Legend wrapperStyle={{ fontSize: 11 }} /><Bar dataKey="conventional" name="Conventional" fill="var(--accent)" radius={[4, 4, 0, 0]} /><Bar dataKey="sustainable" name="Sustainable" fill="var(--primary)" radius={[4, 4, 0, 0]} /></BarChart></ResponsiveContainer></div></Card><Card><div className="mb-5 flex items-center gap-2"><Settings2 className="h-4 w-4 text-primary" /><h2 className="font-semibold">Emission assumptions</h2></div><div className="space-y-5"><Field label="Cement emission factor" value={cementFactor} onChange={v => setCementFactor(Number(v))} suffix="kg CO₂/kg" /><Field label="Plastic processing factor" value={plasticFactor} onChange={v => setPlasticFactor(Number(v))} suffix="kg CO₂/kg" /></div><div className="mt-6 rounded-xl bg-muted/70 p-4"><div className="text-xs text-muted-foreground">Sustainability score</div><div className="mt-1 font-mono text-3xl font-semibold text-primary">{Math.min(98, Math.round(62 + mix.silicaPct * 1.2 + mix.plasticPct * 0.9))}<span className="text-sm text-muted-foreground"> / 100</span></div><div className="mt-3 h-2 rounded-full bg-border"><div className="h-full rounded-full bg-primary" style={{ width: `${Math.min(98, 62 + mix.silicaPct * 1.2 + mix.plasticPct * 0.9)}%` }} /></div></div><p className="mt-5 text-[11px] leading-relaxed text-muted-foreground">Environmental impact values are estimates based on user-defined assumptions and should not be treated as a certified LCA.</p></Card></div></> }
+function Workflow() {
+  const steps = [
+    { icon: Building2, label: 'Create Project', desc: 'Define building parameters' },
+    { icon: Cpu, label: 'AI Build Advisor', desc: 'Get preliminary recommendations' },
+    { icon: Building2, label: 'Structural Concept', desc: 'Column grid and foundation' },
+    { icon: Boxes, label: 'Material Selection', desc: 'Compare and select materials' },
+    { icon: Beaker, label: 'Mix Design', desc: 'Calculate mix proportions' },
+    { icon: TrendingUp, label: 'Strength Prediction', desc: 'Estimate compressive strength' },
+    { icon: Coins, label: 'Cost Analysis', desc: 'Compare cost per m³' },
+    { icon: Leaf, label: 'Sustainability', desc: 'Assess environmental impact' },
+    { icon: MapPin, label: 'Nearby Suppliers', desc: 'Find material sources' },
+    { icon: FileText, label: 'Engineering Report', desc: 'Generate project report' },
+  ]
+  return (
+    <section id="workflow" className="border-b border-border bg-muted/30 py-20">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="mb-12 max-w-2xl">
+          <div className="mb-2.5 flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.16em] text-primary">
+            <span className="h-1 w-1 rounded-full bg-primary" />
+            Engineering Workflow
+          </div>
+          <h2 className="font-serif text-3xl font-semibold tracking-tight sm:text-4xl">From concept to report in one platform</h2>
+          <p className="mt-3 text-base leading-relaxed text-muted-foreground">A guided workflow that takes you from project creation to a complete engineering report.</p>
+        </div>
+        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
+          {steps.map((step, i) => {
+            const Icon = step.icon
+            return (
+              <div key={step.label} className="relative rounded-xl border border-border bg-card p-4 shadow-sm">
+                <div className="mb-3 flex items-center justify-between">
+                  <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/8 text-primary">
+                    <Icon className="h-4 w-4" />
+                  </div>
+                  <span className="font-mono text-xs font-semibold text-muted-foreground">{String(i + 1).padStart(2, '0')}</span>
+                </div>
+                <div className="text-sm font-semibold">{step.label}</div>
+                <div className="mt-0.5 text-xs text-muted-foreground">{step.desc}</div>
+                {i < steps.length - 1 && (
+                  <div className="absolute -right-2 top-1/2 hidden h-px w-4 bg-border lg:block" />
+                )}
+              </div>
+            )
+          })}
+        </div>
+      </div>
+    </section>
+  )
+}
 
-function Cost({ calc, mix }: { calc: ReturnType<typeof calculate>; mix: Mix }) { const [prices, setPrices] = useState({ cement: 8, silica: 18, fine: 1.2, coarse: 1.1, water: 0.05, sp: 95, plastic: 4 }); const set = (key: keyof typeof prices) => (v: string) => setPrices({ ...prices, [key]: Number(v) }); const sustainable = calc.cement * prices.cement + calc.silica * prices.silica + calc.fineNatural * prices.fine + calc.coarseNatural * prices.coarse + mix.water * prices.water + calc.sp * prices.sp + calc.plastic * prices.plastic; const conventional = (calc.binder * prices.cement) + mix.fine * prices.fine + mix.coarse * prices.coarse + mix.water * prices.water + calc.sp * prices.sp; const data = [{ name: 'Conventional', cost: Number(conventional.toFixed(0)) }, { name: 'Sustainable', cost: Number(sustainable.toFixed(0)) }]; return <><PageHeading eyebrow="Material economics" title="Concrete Cost Analysis" description="Compare estimated material cost per cubic metre and edit local rates for your project study." /><div className="grid gap-5 xl:grid-cols-[1fr_1fr]"><Card><h2 className="mb-5 font-semibold">Material prices</h2><div className="grid gap-4 sm:grid-cols-2"><Field label="Cement" value={prices.cement} onChange={set('cement')} suffix="₹ / kg" /><Field label="Silica fume" value={prices.silica} onChange={set('silica')} suffix="₹ / kg" /><Field label="Fine aggregate" value={prices.fine} onChange={set('fine')} suffix="₹ / kg" /><Field label="Coarse aggregate" value={prices.coarse} onChange={set('coarse')} suffix="₹ / kg" /><Field label="Water" value={prices.water} onChange={set('water')} suffix="₹ / L" /><Field label="Superplasticizer" value={prices.sp} onChange={set('sp')} suffix="₹ / kg" /><Field label="Plastic waste" value={prices.plastic} onChange={set('plastic')} suffix="₹ / kg" /></div></Card><Card><h2 className="font-semibold">Cost comparison</h2><div className="mt-5 grid grid-cols-2 gap-3"><div className="rounded-xl bg-muted p-4"><div className="text-xs text-muted-foreground">Conventional mix</div><div className="mt-2 font-mono text-2xl font-semibold">₹{conventional.toFixed(0)}</div></div><div className="rounded-xl bg-primary/10 p-4"><div className="text-xs text-muted-foreground">Sustainable mix</div><div className="mt-2 font-mono text-2xl font-semibold text-primary">₹{sustainable.toFixed(0)}</div></div></div><div className="mt-6 h-[230px]"><ResponsiveContainer><BarChart data={data} layout="vertical" margin={{ left: 10, right: 15 }}><XAxis type="number" tick={{ fontSize: 11 }} /><YAxis type="category" dataKey="name" tick={{ fontSize: 11 }} width={85} /><Tooltip contentStyle={{ background: 'var(--card)', border: '1px solid var(--border)', borderRadius: 12, fontSize: 12 }} /><Bar dataKey="cost" fill="var(--primary)" radius={[0, 5, 5, 0]} /></BarChart></ResponsiveContainer></div><div className="border-t border-border pt-4 text-sm"><span className="text-muted-foreground">Difference: </span><strong>₹{Math.abs(sustainable - conventional).toFixed(0)} ({((sustainable / conventional - 1) * 100).toFixed(1)}% {sustainable > conventional ? 'increase' : 'saving'})</strong></div></Card></div></> }
+function MaterialIntelligence() {
+  return (
+    <section className="border-b border-border py-20">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="grid items-center gap-12 lg:grid-cols-2">
+          <div>
+            <div className="mb-2.5 flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.16em] text-primary">
+              <span className="h-1 w-1 rounded-full bg-primary" />
+              Material Intelligence
+            </div>
+            <h2 className="font-serif text-3xl font-semibold tracking-tight sm:text-4xl">Know your materials before you pour</h2>
+            <p className="mt-4 text-base leading-relaxed text-muted-foreground">Access a comprehensive database of cement types, aggregates, supplementary cementitious materials, admixtures, and sustainable alternatives. Compare properties, costs, and suitability for your specific project.</p>
+            <ul className="mt-6 space-y-3">
+              {['Properties, density, strength contribution, and durability for each material', 'Search and filter by category, building type, or structural element', 'Side-by-side comparison of 2–4 materials with scoring', 'Sustainability ratings and relevant Indian standards'].map((item) => (
+                <li key={item} className="flex items-start gap-2.5 text-sm text-muted-foreground">
+                  <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-accent" />
+                  {item}
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div className="grid grid-cols-2 gap-3">
+            {[
+              { icon: Layers, label: 'Cement', count: '3 types' },
+              { icon: Boxes, label: 'Aggregates', count: '4 types' },
+              { icon: Sparkles, label: 'SCMs', count: '3 types' },
+              { icon: Beaker, label: 'Admixtures', count: '2 types' },
+              { icon: Building2, label: 'Blocks', count: '3 types' },
+              { icon: Network, label: 'Recycled', count: '2 types' },
+            ].map((item) => {
+              const Icon = item.icon
+              return (
+                <div key={item.label} className="rounded-xl border border-border bg-card p-4 shadow-sm">
+                  <Icon className="h-5 w-5 text-primary" />
+                  <div className="mt-3 text-sm font-semibold">{item.label}</div>
+                  <div className="text-xs text-muted-foreground">{item.count}</div>
+                </div>
+              )
+            })}
+          </div>
+        </div>
+      </div>
+    </section>
+  )
+}
 
-function Saved({ saved, setMix, go }: { saved: Mix[]; setMix: (m: Mix) => void; go: (p: Page) => void }) { return <><PageHeading eyebrow="Local library" title="Saved Projects" description="Your mix designs are stored in this browser so you can revisit and compare study scenarios." action={<button onClick={() => go('mix')} className="flex items-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground"><Plus className="h-4 w-4" /> New project</button>} />{saved.length === 0 ? <Card className="flex min-h-64 flex-col items-center justify-center text-center"><Archive className="mb-3 h-8 w-8 text-muted-foreground" /><h2 className="font-semibold">No saved mixes yet</h2><p className="mt-1 max-w-sm text-sm text-muted-foreground">Save your first mix design to build a local project library.</p></Card> : <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">{saved.map((item, i) => <Card key={`${item.targetGrade}-${i}`} className="transition hover:-translate-y-0.5 hover:shadow-md"><div className="flex items-start justify-between"><div><div className="text-xs text-muted-foreground">Project {String(i + 1).padStart(2, '0')}</div><h2 className="mt-1 text-xl font-semibold">{item.targetGrade} sustainable mix</h2></div><button onClick={() => { setMix(item); go('mix'); toast.success('Mix loaded') }} className="rounded-lg border border-border px-2.5 py-1.5 text-xs font-semibold hover:bg-muted">Load</button></div><div className="mt-5 grid grid-cols-3 gap-2 border-t border-border pt-4 text-xs"><div><div className="text-muted-foreground">Silica</div><strong>{item.silicaPct}%</strong></div><div><div className="text-muted-foreground">Plastic</div><strong>{item.plasticPct}%</strong></div><div><div className="text-muted-foreground">W/C</div><strong>{item.wcRatio}</strong></div></div></Card>)}</div>}</> }
-function About() { return <><PageHeading eyebrow="Method & guardrails" title="About the prototype" description="A transparent educational tool for civil engineering students and engineers exploring sustainable concrete." /><div className="grid gap-5 md:grid-cols-2"><Card><h2 className="font-semibold">What this workspace does</h2><ul className="mt-4 space-y-3 text-sm leading-relaxed text-muted-foreground"><li>• Calculates a 1 m³ material schedule with silica fume and recycled plastic aggregate.</li><li>• Estimates strength development using a transparent model, not claimed trained ML.</li><li>• Compares material cost and sustainability indicators from editable assumptions.</li><li>• Saves mix designs locally without requiring an account.</li></ul></Card><Card><h2 className="font-semibold">Important engineering limitation</h2><p className="mt-4 text-sm leading-relaxed text-muted-foreground">This is a college project prototype. Final structural concrete mix proportions must be verified using the applicable IS codes, trial mixes and laboratory testing. Predicted strength and environmental impact values are estimates and must not replace laboratory validation or a certified LCA.</p><div className="mt-5 rounded-xl border border-primary/20 bg-primary/[0.04] p-4 text-xs leading-relaxed text-muted-foreground">The calculation structure is intentionally modular so a validated ML model or project-specific material database can be connected later without changing the interface.</div></Card></div></> }
+function AIPrediction() {
+  return (
+    <section className="border-b border-border bg-muted/30 py-20">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="grid items-center gap-12 lg:grid-cols-2">
+          <div className="order-2 grid grid-cols-2 gap-3 lg:order-1">
+            {[
+              { label: '28-day prediction', value: '34.2', unit: 'MPa' },
+              { label: 'Confidence', value: '87', unit: '%' },
+              { label: 'Target grade', value: 'M30', unit: '' },
+              { label: 'Curing ages', value: '6', unit: 'points' },
+            ].map((item) => (
+              <div key={item.label} className="rounded-xl border border-border bg-card p-5 shadow-sm">
+                <div className="text-xs text-muted-foreground">{item.label}</div>
+                <div className="mt-2 font-mono text-2xl font-semibold">{item.value}<span className="ml-1 text-sm font-normal text-muted-foreground">{item.unit}</span></div>
+              </div>
+            ))}
+          </div>
+          <div className="order-1 lg:order-2">
+            <div className="mb-2.5 flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.16em] text-primary">
+              <span className="h-1 w-1 rounded-full bg-primary" />
+              AI Strength Prediction
+            </div>
+            <h2 className="font-serif text-3xl font-semibold tracking-tight sm:text-4xl">Predict strength before you pour</h2>
+            <p className="mt-4 text-base leading-relaxed text-muted-foreground">Estimate compressive strength development from 3 to 90 days using a transparent model that accounts for binder content, water-binder ratio, silica fume benefit, and plastic replacement penalty.</p>
+            <div className="mt-6 rounded-xl border border-primary/15 bg-primary/[0.03] p-4">
+              <div className="flex items-start gap-2.5">
+                <ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
+                <p className="text-xs leading-relaxed text-muted-foreground">Labeled as a prototype model-based estimate — not a trained ML model. The interface is prepared for future ML model integration. All predictions require laboratory validation.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  )
+}
 
-function calculate(mix: Mix) { const binder = mix.water / Math.max(0.25, mix.wcRatio); const silica = binder * mix.silicaPct / 100; const cement = binder - silica; const plasticBase = mix.plasticReplaces === 'fine' ? mix.fine : mix.coarse; const plastic = plasticBase * mix.plasticPct / 100; return { binder, silica, cement, water: mix.water, fineNatural: mix.fine - (mix.plasticReplaces === 'fine' ? plastic : 0), coarseNatural: mix.coarse - (mix.plasticReplaces === 'coarse' ? plastic : 0), plastic, sp: binder * mix.spDosage / 100, waterBinder: mix.water / binder } }
-function predict(mix: Mix, age: number) { const calc = calculate(mix); const base = 18 + calc.binder * 0.035 - calc.waterBinder * 11 + mix.silicaPct * 0.18 - mix.plasticPct * 0.055 + mix.spDosage * 0.9; const ageFactor = age <= 3 ? 0.42 : age <= 7 ? 0.65 : age <= 14 ? 0.84 : age <= 28 ? 1 : age <= 56 ? 1.08 : 1.12; return Math.max(8, base * ageFactor) }
+function StructuralIntelligence() {
+  return (
+    <section className="border-b border-border py-20">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="grid items-center gap-12 lg:grid-cols-2">
+          <div>
+            <div className="mb-2.5 flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.16em] text-primary">
+              <span className="h-1 w-1 rounded-full bg-primary" />
+              Structural Intelligence
+            </div>
+            <h2 className="font-serif text-3xl font-semibold tracking-tight sm:text-4xl">Visualize your structure before you build</h2>
+            <p className="mt-4 text-base leading-relaxed text-muted-foreground">Generate a preliminary structural concept with column grid layout, beam and slab arrangement, foundation type, and seismic considerations based on your building parameters.</p>
+            <ul className="mt-6 space-y-3">
+              {['Column grid based on spacing and building dimensions', 'Foundation type recommendation based on soil conditions', 'Seismic zone considerations per IS 1893:2016', 'Element inspection: columns, beams, slabs, footings, shear walls'].map((item) => (
+                <li key={item} className="flex items-start gap-2.5 text-sm text-muted-foreground">
+                  <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-accent" />
+                  {item}
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div className="rounded-2xl border border-border bg-card p-6 shadow-md">
+            <div className="mb-4 flex items-center gap-2 text-sm font-semibold">
+              <Building2 className="h-4 w-4 text-primary" />
+              Structural Concept Preview
+            </div>
+            <div className="grid grid-cols-4 gap-2">
+              {Array.from({ length: 16 }).map((_, i) => (
+                <div key={i} className="aspect-square rounded border-2 border-primary/20 bg-primary/5" />
+              ))}
+            </div>
+            <div className="mt-4 grid grid-cols-3 gap-2 text-xs">
+              <div className="rounded-lg bg-muted p-2.5">
+                <div className="text-muted-foreground">Columns</div>
+                <div className="font-mono font-semibold">16</div>
+              </div>
+              <div className="rounded-lg bg-muted p-2.5">
+                <div className="text-muted-foreground">Grid</div>
+                <div className="font-mono font-semibold">4×4</div>
+              </div>
+              <div className="rounded-lg bg-muted p-2.5">
+                <div className="text-muted-foreground">Height</div>
+                <div className="font-mono font-semibold">12.0m</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  )
+}
+
+function Sustainability() {
+  return (
+    <section id="sustainability" className="border-b border-border bg-muted/30 py-20">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="mb-12 max-w-2xl">
+          <div className="mb-2.5 flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.16em] text-accent">
+            <span className="h-1 w-1 rounded-full bg-accent" />
+            Sustainability
+          </div>
+          <h2 className="font-serif text-3xl font-semibold tracking-tight sm:text-4xl">Engineer for a greener future</h2>
+          <p className="mt-3 text-base leading-relaxed text-muted-foreground">Quantify the environmental impact of your concrete mix. Track plastic waste diversion, CO₂ reduction, and natural aggregate savings with transparent, assumption-based scoring.</p>
+        </div>
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {[
+            { icon: Leaf, label: 'Plastic diverted', value: '10.2 kg/m³' },
+            { icon: Layers, label: 'Aggregate reduction', value: '10%' },
+            { icon: Beaker, label: 'Cement replaced', value: '30.2 kg/m³' },
+            { icon: TrendingUp, label: 'CO₂ reduction', value: '12.5 kg/m³' },
+          ].map((item) => {
+            const Icon = item.icon
+            return (
+              <div key={item.label} className="rounded-xl border border-border bg-card p-5 shadow-sm">
+                <div className="mb-3 flex h-9 w-9 items-center justify-center rounded-lg bg-accent/10 text-accent">
+                  <Icon className="h-4 w-4" />
+                </div>
+                <div className="text-xs text-muted-foreground">{item.label}</div>
+                <div className="mt-1.5 font-mono text-xl font-semibold">{item.value}</div>
+              </div>
+            )
+          })}
+        </div>
+      </div>
+    </section>
+  )
+}
+
+function Audiences() {
+  const audiences = [
+    { icon: HardHat, title: 'Civil Engineers', desc: 'Transparent mix design, strength prediction, and structural concepts for project planning and analysis.' },
+    { icon: Building2, title: 'Contractors', desc: 'Cost analysis, material comparison, and supplier discovery to optimize procurement and construction.' },
+    { icon: Users, title: 'Construction Companies', desc: 'Project management, standardized workflows, and comprehensive reporting for multiple projects.' },
+    { icon: GraduationCap, title: 'Researchers & Students', desc: 'Educational tool for understanding concrete technology, sustainable materials, and engineering principles.' },
+  ]
+  return (
+    <section id="audiences" className="border-b border-border py-20">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="mb-12 max-w-2xl">
+          <div className="mb-2.5 flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.16em] text-primary">
+            <span className="h-1 w-1 rounded-full bg-primary" />
+            For Engineering Teams
+          </div>
+          <h2 className="font-serif text-3xl font-semibold tracking-tight sm:text-4xl">Built for the entire construction ecosystem</h2>
+        </div>
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {audiences.map((aud) => {
+            const Icon = aud.icon
+            return (
+              <div key={aud.title} className="rounded-xl border border-border bg-card p-5 shadow-sm">
+                <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-xl bg-primary/8 text-primary">
+                  <Icon className="h-5 w-5" />
+                </div>
+                <h3 className="text-base font-semibold">{aud.title}</h3>
+                <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{aud.desc}</p>
+              </div>
+            )
+          })}
+        </div>
+      </div>
+    </section>
+  )
+}
+
+function FinalCTA() {
+  return (
+    <section className="border-b border-border bg-primary py-20 text-primary-foreground">
+      <div className="mx-auto max-w-4xl px-4 text-center sm:px-6 lg:px-8">
+        <h2 className="font-serif text-3xl font-semibold tracking-tight sm:text-4xl">Start your engineering project today</h2>
+        <p className="mx-auto mt-4 max-w-2xl text-base leading-relaxed text-primary-foreground/80">Launch the platform and access mix design, material intelligence, structural concepts, cost analysis, and sustainability tools — all in one workspace.</p>
+        <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
+          <Link to="/app" className="inline-flex h-12 items-center gap-2 rounded-xl bg-primary-foreground px-6 text-sm font-semibold text-primary shadow-md transition-all hover:-translate-y-0.5 hover:shadow-lg active:scale-[0.98]">
+            Launch Platform
+            <ArrowRight className="h-4 w-4" />
+          </Link>
+          <a href="#capabilities" className="inline-flex h-12 items-center gap-2 rounded-xl border border-primary-foreground/20 px-6 text-sm font-semibold text-primary-foreground transition-all hover:bg-primary-foreground/10 active:scale-[0.98]">
+            Explore Capabilities
+          </a>
+        </div>
+      </div>
+    </section>
+  )
+}
+
+function Footer() {
+  return (
+    <footer className="py-12">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="flex flex-col items-center justify-between gap-4 sm:flex-row">
+          <div className="flex items-center gap-3">
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
+              <FlaskConical className="h-4 w-4" />
+            </div>
+            <div className="text-sm font-semibold">CONCRETE.AI</div>
+          </div>
+          <p className="text-xs text-muted-foreground">AI-Powered Civil Engineering & Construction Intelligence Platform. Preliminary engineering tool — requires validation by qualified professionals.</p>
+        </div>
+      </div>
+    </footer>
+  )
+}
