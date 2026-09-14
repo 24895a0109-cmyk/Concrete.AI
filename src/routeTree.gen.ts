@@ -12,6 +12,19 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as AppRouteImport } from './routes/app'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AppIndexRouteImport } from './routes/app/index'
+import { Route as AppSustainabilityRouteImport } from './routes/app/sustainability'
+import { Route as AppStructuralRouteImport } from './routes/app/structural'
+import { Route as AppStrengthRouteImport } from './routes/app/strength'
+import { Route as AppSavedRouteImport } from './routes/app/saved'
+import { Route as AppReportsRouteImport } from './routes/app/reports'
+import { Route as AppNearbySuppliersRouteImport } from './routes/app/nearby-suppliers'
+import { Route as AppMixDesignRouteImport } from './routes/app/mix-design'
+import { Route as AppMaterialsRouteImport } from './routes/app/materials'
+import { Route as AppMaterialRecommendationRouteImport } from './routes/app/material-recommendation'
+import { Route as AppCostRouteImport } from './routes/app/cost'
+import { Route as AppComparisonRouteImport } from './routes/app/comparison'
+import { Route as AppBuildAdvisorRouteImport } from './routes/app/build-advisor'
+import { Route as AppAboutRouteImport } from './routes/app/about'
 
 const AppRoute = AppRouteImport.update({
   id: '/app',
@@ -28,28 +41,181 @@ const AppIndexRoute = AppIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AppRoute,
 } as any)
+const AppSustainabilityRoute = AppSustainabilityRouteImport.update({
+  id: '/sustainability',
+  path: '/sustainability',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppStructuralRoute = AppStructuralRouteImport.update({
+  id: '/structural',
+  path: '/structural',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppStrengthRoute = AppStrengthRouteImport.update({
+  id: '/strength',
+  path: '/strength',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppSavedRoute = AppSavedRouteImport.update({
+  id: '/saved',
+  path: '/saved',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppReportsRoute = AppReportsRouteImport.update({
+  id: '/reports',
+  path: '/reports',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppNearbySuppliersRoute = AppNearbySuppliersRouteImport.update({
+  id: '/nearby-suppliers',
+  path: '/nearby-suppliers',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppMixDesignRoute = AppMixDesignRouteImport.update({
+  id: '/mix-design',
+  path: '/mix-design',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppMaterialsRoute = AppMaterialsRouteImport.update({
+  id: '/materials',
+  path: '/materials',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppMaterialRecommendationRoute =
+  AppMaterialRecommendationRouteImport.update({
+    id: '/material-recommendation',
+    path: '/material-recommendation',
+    getParentRoute: () => AppRoute,
+  } as any)
+const AppCostRoute = AppCostRouteImport.update({
+  id: '/cost',
+  path: '/cost',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppComparisonRoute = AppComparisonRouteImport.update({
+  id: '/comparison',
+  path: '/comparison',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppBuildAdvisorRoute = AppBuildAdvisorRouteImport.update({
+  id: '/build-advisor',
+  path: '/build-advisor',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppAboutRoute = AppAboutRouteImport.update({
+  id: '/about',
+  path: '/about',
+  getParentRoute: () => AppRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/app': typeof AppRouteWithChildren
+  '/app/about': typeof AppAboutRoute
+  '/app/build-advisor': typeof AppBuildAdvisorRoute
+  '/app/comparison': typeof AppComparisonRoute
+  '/app/cost': typeof AppCostRoute
+  '/app/material-recommendation': typeof AppMaterialRecommendationRoute
+  '/app/materials': typeof AppMaterialsRoute
+  '/app/mix-design': typeof AppMixDesignRoute
+  '/app/nearby-suppliers': typeof AppNearbySuppliersRoute
+  '/app/reports': typeof AppReportsRoute
+  '/app/saved': typeof AppSavedRoute
+  '/app/strength': typeof AppStrengthRoute
+  '/app/structural': typeof AppStructuralRoute
+  '/app/sustainability': typeof AppSustainabilityRoute
   '/app/': typeof AppIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/app/about': typeof AppAboutRoute
+  '/app/build-advisor': typeof AppBuildAdvisorRoute
+  '/app/comparison': typeof AppComparisonRoute
+  '/app/cost': typeof AppCostRoute
+  '/app/material-recommendation': typeof AppMaterialRecommendationRoute
+  '/app/materials': typeof AppMaterialsRoute
+  '/app/mix-design': typeof AppMixDesignRoute
+  '/app/nearby-suppliers': typeof AppNearbySuppliersRoute
+  '/app/reports': typeof AppReportsRoute
+  '/app/saved': typeof AppSavedRoute
+  '/app/strength': typeof AppStrengthRoute
+  '/app/structural': typeof AppStructuralRoute
+  '/app/sustainability': typeof AppSustainabilityRoute
   '/app': typeof AppIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/app': typeof AppRouteWithChildren
+  '/app/about': typeof AppAboutRoute
+  '/app/build-advisor': typeof AppBuildAdvisorRoute
+  '/app/comparison': typeof AppComparisonRoute
+  '/app/cost': typeof AppCostRoute
+  '/app/material-recommendation': typeof AppMaterialRecommendationRoute
+  '/app/materials': typeof AppMaterialsRoute
+  '/app/mix-design': typeof AppMixDesignRoute
+  '/app/nearby-suppliers': typeof AppNearbySuppliersRoute
+  '/app/reports': typeof AppReportsRoute
+  '/app/saved': typeof AppSavedRoute
+  '/app/strength': typeof AppStrengthRoute
+  '/app/structural': typeof AppStructuralRoute
+  '/app/sustainability': typeof AppSustainabilityRoute
   '/app/': typeof AppIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/app' | '/app/'
+  fullPaths:
+    | '/'
+    | '/app'
+    | '/app/about'
+    | '/app/build-advisor'
+    | '/app/comparison'
+    | '/app/cost'
+    | '/app/material-recommendation'
+    | '/app/materials'
+    | '/app/mix-design'
+    | '/app/nearby-suppliers'
+    | '/app/reports'
+    | '/app/saved'
+    | '/app/strength'
+    | '/app/structural'
+    | '/app/sustainability'
+    | '/app/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/app'
-  id: '__root__' | '/' | '/app' | '/app/'
+  to:
+    | '/'
+    | '/app/about'
+    | '/app/build-advisor'
+    | '/app/comparison'
+    | '/app/cost'
+    | '/app/material-recommendation'
+    | '/app/materials'
+    | '/app/mix-design'
+    | '/app/nearby-suppliers'
+    | '/app/reports'
+    | '/app/saved'
+    | '/app/strength'
+    | '/app/structural'
+    | '/app/sustainability'
+    | '/app'
+  id:
+    | '__root__'
+    | '/'
+    | '/app'
+    | '/app/about'
+    | '/app/build-advisor'
+    | '/app/comparison'
+    | '/app/cost'
+    | '/app/material-recommendation'
+    | '/app/materials'
+    | '/app/mix-design'
+    | '/app/nearby-suppliers'
+    | '/app/reports'
+    | '/app/saved'
+    | '/app/strength'
+    | '/app/structural'
+    | '/app/sustainability'
+    | '/app/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -80,14 +246,131 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppIndexRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/sustainability': {
+      id: '/app/sustainability'
+      path: '/sustainability'
+      fullPath: '/app/sustainability'
+      preLoaderRoute: typeof AppSustainabilityRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/structural': {
+      id: '/app/structural'
+      path: '/structural'
+      fullPath: '/app/structural'
+      preLoaderRoute: typeof AppStructuralRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/strength': {
+      id: '/app/strength'
+      path: '/strength'
+      fullPath: '/app/strength'
+      preLoaderRoute: typeof AppStrengthRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/saved': {
+      id: '/app/saved'
+      path: '/saved'
+      fullPath: '/app/saved'
+      preLoaderRoute: typeof AppSavedRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/reports': {
+      id: '/app/reports'
+      path: '/reports'
+      fullPath: '/app/reports'
+      preLoaderRoute: typeof AppReportsRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/nearby-suppliers': {
+      id: '/app/nearby-suppliers'
+      path: '/nearby-suppliers'
+      fullPath: '/app/nearby-suppliers'
+      preLoaderRoute: typeof AppNearbySuppliersRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/mix-design': {
+      id: '/app/mix-design'
+      path: '/mix-design'
+      fullPath: '/app/mix-design'
+      preLoaderRoute: typeof AppMixDesignRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/materials': {
+      id: '/app/materials'
+      path: '/materials'
+      fullPath: '/app/materials'
+      preLoaderRoute: typeof AppMaterialsRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/material-recommendation': {
+      id: '/app/material-recommendation'
+      path: '/material-recommendation'
+      fullPath: '/app/material-recommendation'
+      preLoaderRoute: typeof AppMaterialRecommendationRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/cost': {
+      id: '/app/cost'
+      path: '/cost'
+      fullPath: '/app/cost'
+      preLoaderRoute: typeof AppCostRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/comparison': {
+      id: '/app/comparison'
+      path: '/comparison'
+      fullPath: '/app/comparison'
+      preLoaderRoute: typeof AppComparisonRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/build-advisor': {
+      id: '/app/build-advisor'
+      path: '/build-advisor'
+      fullPath: '/app/build-advisor'
+      preLoaderRoute: typeof AppBuildAdvisorRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/about': {
+      id: '/app/about'
+      path: '/about'
+      fullPath: '/app/about'
+      preLoaderRoute: typeof AppAboutRouteImport
+      parentRoute: typeof AppRoute
+    }
   }
 }
 
 interface AppRouteChildren {
+  AppAboutRoute: typeof AppAboutRoute
+  AppBuildAdvisorRoute: typeof AppBuildAdvisorRoute
+  AppComparisonRoute: typeof AppComparisonRoute
+  AppCostRoute: typeof AppCostRoute
+  AppMaterialRecommendationRoute: typeof AppMaterialRecommendationRoute
+  AppMaterialsRoute: typeof AppMaterialsRoute
+  AppMixDesignRoute: typeof AppMixDesignRoute
+  AppNearbySuppliersRoute: typeof AppNearbySuppliersRoute
+  AppReportsRoute: typeof AppReportsRoute
+  AppSavedRoute: typeof AppSavedRoute
+  AppStrengthRoute: typeof AppStrengthRoute
+  AppStructuralRoute: typeof AppStructuralRoute
+  AppSustainabilityRoute: typeof AppSustainabilityRoute
   AppIndexRoute: typeof AppIndexRoute
 }
 
 const AppRouteChildren: AppRouteChildren = {
+  AppAboutRoute: AppAboutRoute,
+  AppBuildAdvisorRoute: AppBuildAdvisorRoute,
+  AppComparisonRoute: AppComparisonRoute,
+  AppCostRoute: AppCostRoute,
+  AppMaterialRecommendationRoute: AppMaterialRecommendationRoute,
+  AppMaterialsRoute: AppMaterialsRoute,
+  AppMixDesignRoute: AppMixDesignRoute,
+  AppNearbySuppliersRoute: AppNearbySuppliersRoute,
+  AppReportsRoute: AppReportsRoute,
+  AppSavedRoute: AppSavedRoute,
+  AppStrengthRoute: AppStrengthRoute,
+  AppStructuralRoute: AppStructuralRoute,
+  AppSustainabilityRoute: AppSustainabilityRoute,
   AppIndexRoute: AppIndexRoute,
 }
 

@@ -43,11 +43,9 @@ function DashboardHome() {
   const [projects, setProjects] = useState<Project[]>(() => {
     try { return JSON.parse(localStorage.getItem('concrete-projects') || 'null') || sampleProjects } catch { return sampleProjects }
   })
-  const [savedMixes, setSavedMixes] = useState<number>(0)
-
-  useEffect(() => {
-    try { setSavedMixes(JSON.parse(localStorage.getItem('concrete-mixes') || '[]').length) } catch { setSavedMixes(0) }
-  }, [])
+  const [savedMixes] = useState<number>(() => {
+    try { return JSON.parse(localStorage.getItem('concrete-mixes') || '[]').length } catch { return 0 }
+  })
 
   const calc = calculate(defaultMix)
   const prediction = predict(defaultMix, 28)
@@ -148,8 +146,8 @@ function DashboardHome() {
             <ResponsiveContainer>
               <BarChart data={curve.slice(0, 4)} margin={{ left: -20, right: 5, top: 5, bottom: 0 }}>
                 <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false} />
-                <XAxis dataKey="age" tick={chartAxisStyle} stroke="var(--muted-foreground)" tickLine={false} axisLine={false} />
-                <YAxis tick={chartAxisStyle} stroke="var(--muted-foreground)" tickLine={false} axisLine={false} />
+                <XAxis dataKey="age" tick={{ fontSize: 11 }} stroke="var(--muted-foreground)" tickLine={false} axisLine={false} />
+                <YAxis tick={{ fontSize: 11 }} stroke="var(--muted-foreground)" tickLine={false} axisLine={false} />
                 <Tooltip contentStyle={chartTooltipStyle} />
                 <Bar dataKey="sustainable" name="Strength" fill="var(--chart-1)" radius={[4, 4, 0, 0]} barSize={24} />
               </BarChart>
